@@ -43,6 +43,8 @@ export type WindowOptionsType<T = undefined> = {
 	sandbox: boolean;
 	// Allow background media playback (prevents suspension when app loses focus)
 	backgroundMedia: boolean;
+	// CEF partition for session/cookie isolation. Use "persist:<name>" for persistent storage.
+	partition: string | null;
 };
 
 const defaultOptions: WindowOptionsType = {
@@ -65,6 +67,7 @@ const defaultOptions: WindowOptionsType = {
 	navigationRules: null,
 	sandbox: false,
 	backgroundMedia: false,
+	partition: null,
 };
 
 export const BrowserWindowMap: {
@@ -130,6 +133,7 @@ export class BrowserWindow<T extends RPCWithTransport = RPCWithTransport> {
 	// Sandbox mode disables RPC and only allows event emission (for untrusted content)
 	sandbox: boolean = false;
 	backgroundMedia: boolean = false;
+	partition: string | null = null;
 	frame: {
 		x: number;
 		y: number;
@@ -160,6 +164,7 @@ export class BrowserWindow<T extends RPCWithTransport = RPCWithTransport> {
 		this.navigationRules = options.navigationRules || null;
 		this.sandbox = options.sandbox ?? false;
 		this.backgroundMedia = options.backgroundMedia ?? false;
+		this.partition = options.partition || null;
 
 		this.init(options);
 	}
@@ -243,6 +248,7 @@ export class BrowserWindow<T extends RPCWithTransport = RPCWithTransport> {
 			windowId: this.id,
 			navigationRules: this.navigationRules,
 			sandbox: this.sandbox,
+			partition: this.partition,
 			startPassthrough: this.passthrough,
 			backgroundMedia: this.backgroundMedia,
 		});
